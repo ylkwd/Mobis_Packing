@@ -102,7 +102,7 @@ def draw(pieces, color_index=[], title=""):
     else:
         dim = color_index[0]
         clr = color_index[1]
-        # sorted_pieces = color_index[0]
+        sorted_pieces = color_index[0]
         for each in sorted_size:
             # print(each)
             index = dim.index(each)
@@ -136,7 +136,6 @@ def draw(pieces, color_index=[], title=""):
         ax.set_zlim3d([0.0, float(truck_dimension[1])])
         ax.set_zlabel('Z')
     plt.title(title)
-    # fig.suptitle('bold figure suptitle', fontsize=14, fontweight='bold')
     plt.show()
     print(truck_dimension)
     return color_index

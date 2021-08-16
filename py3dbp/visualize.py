@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import axes3d, Axes3D
 import json
 
-pallete = ['darkgreen', 'tomato', 'yellow', 'darkblue', 'darkviolet', 'indianred', 'yellowgreen', 'mediumblue', 'cyan',
+pallete = ['darkgreen', 'yellow', 'darkblue', 'darkviolet', 'indianred', 'yellowgreen', 'mediumblue', 'cyan',
            'black', 'indigo', 'pink', 'lime', 'sienna', 'plum', 'deepskyblue', 'forestgreen', 'fuchsia', 'brown',
            'turquoise', 'aliceblue', 'blueviolet', 'rosybrown', 'powderblue', 'lightblue', 'skyblue', 'lightskyblue',
            'steelblue', 'dodgerblue', 'lightslategray', 'lightslategrey', 'slategray', 'slategrey', 'lightsteelblue',
@@ -31,7 +31,7 @@ color_pallete = ['lightsalmon', 'lightseagreen', 'lavenderblush', 'aquamarine', 
                  'violet', 'purple', 'darkmagenta', 'magenta', 'orchid', 'mediumvioletred', 'deeppink', 'hotpink',
                  'palevioletred', 'crimson', 'lightpink']
 
-with open('input.json', 'r') as outfile:
+with open('../input.json', 'r') as outfile:
     data = json.load(outfile)
 # container  = Dataset.test_example()
 # # container = dataset
@@ -76,7 +76,6 @@ def draw(pieces, color_index=[], title=""):
     sizes = []
     colors = []
     sorted_size = []
-    box_type = []
     ColorPair = {}
     for each in pieces:
         positions.append(each[0:3])
@@ -93,33 +92,30 @@ def draw(pieces, color_index=[], title=""):
             if i >= 1:
                 if positions[i][2] == positions[i - 1][2]:
                     colors.append(pallete[index])
-                    box_type.append(index)
                     # print(i,index,colors)
 
                 else:
                     index += 1
                     colors.append(pallete[index])
                     ColorPair[positions[i][2]] = {pallete[index]}
-                    box_type.append(index)
                     # print(i,index,colors)
             else:
                 colors.append(pallete[index])
                 ColorPair[positions[i][2]] = {pallete[index]}
-                box_type.append(index)
                 # print(i,index,colors)
-        color_index = [sorted_size, colors, box_type]
+        color_index = [sorted_size, colors]
         return color_index, ColorPair
     else:
         dim = color_index[0]
         clr = color_index[1]
         sorted_pieces = color_index[0]
-        clr_index = 0
+        clr_index =0
         for each in sorted_size:
-            # print(each)
-            # index = dim.index(each)
 
+            # print(each)
+            index = dim.index(each)
             colors.append(clr[clr_index])
-            clr_index += 1
+            clr_index+=1
             # print(clr[index])
         # for i in range(len(sorted_pieces)):
         #     if set(each[3:]) == sorted_pieces[i]:
@@ -135,7 +131,6 @@ def draw(pieces, color_index=[], title=""):
     ax = plt.axes(projection='3d')
     # axes =[2260,1320,1100]
     # data = np.ones(axes, dtype=np.bool)
-
     fig.add_axes(ax)
 
     for p, s, c in zip(positions, sizes, colors):
@@ -150,8 +145,6 @@ def draw(pieces, color_index=[], title=""):
         ax.set_zlim3d([0.0, float(truck_dimension[1])])
         ax.set_zlabel('Z')
     plt.title(title)
-    # ax.set_aspect('scaled')
-    # fig.suptitle('bold figure suptitle', fontsize=14, fontweight='bold')
     plt.show()
     print(truck_dimension)
     return color_index

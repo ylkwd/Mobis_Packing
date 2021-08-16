@@ -17,7 +17,7 @@ def Mul_packing():
     count = 0
     Count = 0
 
-    with open('input.json', 'r') as outfile:
+    with open('../input.json', 'r') as outfile:
         data = json.load(outfile)
     # container  = Dataset.test_example()
     # # container = dataset
@@ -53,8 +53,6 @@ def Mul_packing():
 
 
         color_index, ColorPair = vis2.draw(pieces=packages, title="True Solution Packing")
-        print(color_index)
-        # exit()
         for b in packer.bins:
             print(":::::::::::", b.string())
 
@@ -71,6 +69,8 @@ def Mul_packing():
                          float(item.width), float(item.height)])
             finalresult.append(results)
 
+            with open('output_{file_count}.json'.format(file_count=Count), 'w') as outfile:
+                json.dump(finalresult, outfile)
             # print(results)
             print(finalresult)
             # print(color_index)
@@ -91,10 +91,10 @@ def Mul_packing():
             print(count)
             print("***************************************************")
             print("***************************************************")
-            # print(truck_dimension[0], truck_dimension[1])
+            print(truck_dimension[0], truck_dimension[1])
             for each in finalresult:
-                print(each)
-                vis2.draw(each, color_index, title="Figure {},Number of Boxes:{}, {} ".format(Count + 1,len(finalresult[0]), ColorPair))
+                # print(each)
+                vis2.draw(each, color_index, title="Figure {},{} ".format(Count + 1, ColorPair))
         packer.items = []
         packer.bins = []
         for i in list(next_items.keys()):
@@ -103,10 +103,10 @@ def Mul_packing():
                 Item(next_items[i]['Id'], next_items[i]['name'], next_items[i]['width'], next_items[i]['height'],
                      next_items[i]['depth'],
                      next_items[i]['weight']))
-        packer.add_bin(Bin('large-2-box', 2, truck_dimension[0], truck_dimension[2], truck_dimension[1], 700000.0))
+        packer.add_bin(Bin('large-2-box', 2, truck_dimension[0], truck_dimension[2], truck_dimension[1], 7000.0))
         print(len(packer.items))
         print(len(packer.unfitted_items))
         print(len(packer.bins))
         Count += 1
 
-# Mul_packing()
+Mul_packing()

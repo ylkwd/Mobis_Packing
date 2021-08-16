@@ -201,7 +201,7 @@ def start():
             # Plot using plotly
             # print(len(packages))
 
-            # color_index, ColorPair = vis.draw_solution(pieces=packages)
+            # # color_index, ColorPair = vis.draw_solution(pieces=packages)
             # print(len(color_index[0]), len(color_index[1]))
             # print(ColorPair)
             #
@@ -213,10 +213,8 @@ def start():
             #
             # Plot using matplotlib
             color_index,ColorPair = vis2.draw(pieces=packages, title="True Solution Packing")
-            print(color_index)
-            # exit()
             for each in results:
-                vis2.draw(each, color_index, title="Figure Number of Box:{},Avg. Volume {}, {} ".format(len(each),average_fitness[-1][0],ColorPair))
+                vis2.draw(each, color_index, title="Figure {} ".format(ColorPair))
             # draw_pareto(population)
             average_vol.append(average_fitness[-1][0])
             average_num.append(average_fitness[-1][1])
