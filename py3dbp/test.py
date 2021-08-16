@@ -17,7 +17,7 @@ def Mul_packing():
     count = 0
     Count = 0
 
-    with open('../input.json', 'r') as outfile:
+    with open('.input.json', 'r') as outfile:
         data = json.load(outfile)
     # container  = Dataset.test_example()
     # # container = dataset
@@ -109,4 +109,4 @@ def Mul_packing():
         print(len(packer.bins))
         Count += 1
 
-Mul_packing()
+# Mul_packing()

@@ -31,7 +31,7 @@ color_pallete = ['lightsalmon', 'lightseagreen', 'lavenderblush', 'aquamarine', 
                  'violet', 'purple', 'darkmagenta', 'magenta', 'orchid', 'mediumvioletred', 'deeppink', 'hotpink',
                  'palevioletred', 'crimson', 'lightpink']
 
-with open('../input.json', 'r') as outfile:
+with open('input.json', 'r') as outfile:
     data = json.load(outfile)
 # container  = Dataset.test_example()
 # # container = dataset
