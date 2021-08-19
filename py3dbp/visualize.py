@@ -31,16 +31,16 @@ color_pallete = ['lightsalmon', 'lightseagreen', 'lavenderblush', 'aquamarine', 
                  'violet', 'purple', 'darkmagenta', 'magenta', 'orchid', 'mediumvioletred', 'deeppink', 'hotpink',
                  'palevioletred', 'crimson', 'lightpink']
 
-with open('input.json', 'r') as outfile:
-    data = json.load(outfile)
+# with open('input.json', 'r') as outfile:
+#     data = json.load(outfile)
 # container  = Dataset.test_example()
 # # container = dataset
 # print(container)
 # exit()
-truck_dimension = []
-problem_indices = list(data.keys())
-for p_ind in problem_indices:
-    truck_dimension = data[p_ind]['truck dimension']
+# truck_dimension = []
+# problem_indices = list(data.keys())
+# for p_ind in problem_indices:
+#     truck_dimension = data[p_ind]['truck dimension']
 
 
 def cuboid_data(o, size=(1, 1, 1)):
@@ -69,54 +69,70 @@ def plotcuboid(pos=(0, 0, 0), size=(1, 1, 1), ax=None, **kwargs):
         ax.plot_surface(X, Y, Z, rstride=1, cstride=1, **kwargs)
 
 
-def draw(pieces, color_index=[], title=""):
+def draw(pieces, color_index=[], truck_dimension=[], title=""):
     # print(truck_dimension[0],type(truck_dimension[0]))
     # exit()
     positions = []
+    boxesId =[]
     sizes = []
     colors = []
     sorted_size = []
     ColorPair = {}
-    for each in pieces:
-        positions.append(each[0:3])
-        sizes.append(each[3:])
-        sorted_size.append(set(each[3:]))
+
     if len(color_index) == 0:
+        for each in pieces:
+            # boxesId.append(each[0])
+            positions.append(each[:3])
+            sizes.append(each[3:])
+            sorted_size.append(set(each[3:]))
         # for i in range(len(pallete)):
         #     index = random.randint(0,len(pallete)-1)
         #     colors.append(pallete[index])
         # colors = pallete[randint(0,50)]
         index = 0
+        # boxesId = []
         for i in range(0, len(positions)):
             # index = random.randint(0,len(pallete)-1)
             if i >= 1:
                 if positions[i][2] == positions[i - 1][2]:
                     colors.append(pallete[index])
+                    boxesId.append(positions[i][2])
                     # print(i,index,colors)
 
                 else:
                     index += 1
                     colors.append(pallete[index])
+                    boxesId.append(positions[i][2])
                     ColorPair[positions[i][2]] = {pallete[index]}
                     # print(i,index,colors)
             else:
                 colors.append(pallete[index])
+                boxesId.append(positions[i][2])
                 ColorPair[positions[i][2]] = {pallete[index]}
                 # print(i,index,colors)
-        color_index = [sorted_size, colors]
+        # print(len(colors),len(boxesId))
+        color_index = [sorted_size, colors, boxesId]
         return color_index, ColorPair
     else:
-        dim = color_index[0]
+        for each in pieces:
+            boxesId.append(each[0])
+            positions.append(each[1:4])
+            sizes.append(each[4:7])
+            sorted_size.append(set(each[4:7]))
+
+        dim = color_index[2]
         clr = color_index[1]
         sorted_pieces = color_index[0]
-        clr_index =0
-        for each in sorted_size:
-
+        clr_index = 0
+        print(boxesId,positions)
+        for each in boxesId:
             # print(each)
             index = dim.index(each)
-            colors.append(clr[clr_index])
-            clr_index+=1
-            # print(clr[index])
+            # print(index)
+            colors.append(clr[index])
+            clr_index += 1
+        print(colors)
+        # exit()
         # for i in range(len(sorted_pieces)):
         #     if set(each[3:]) == sorted_pieces[i]:
         #         # print(clr[i])

@@ -137,7 +137,7 @@ def draw(pieces, color_index=[], title=""):
         ax.set_zlabel('Z')
     plt.title(title)
     plt.show()
-    print(truck_dimension)
+    # print(truck_dimension)
     return color_index
 
 # %%

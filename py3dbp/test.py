@@ -1,5 +1,7 @@
+import operator
+
 from py3dbp import Packer, Bin, Item
-import Dataset as Dataset
+# import Dataset as Dataset
 import json
 from py3dbp import visualize as vis2
 from py3dbp.constants import RotationType, Axis
@@ -16,9 +18,10 @@ def Mul_packing():
     container = {}
     count = 0
     Count = 0
-
-    with open('.input.json', 'r') as outfile:
+    with open('../input.json', 'r') as outfile:
         data = json.load(outfile)
+    # with open('input_example1.json', 'r') as outfile:
+    #     data = json.load(outfile)
     # container  = Dataset.test_example()
     # # container = dataset
     # print(container)
@@ -29,30 +32,50 @@ def Mul_packing():
         packages = data[p_ind]['solution']
         print(len(packages))
         boxes = data[p_ind]['boxes']
+        serial_box = data[p_ind]['Box Serials']
         print(len(boxes))
         total_value = data[p_ind]['total value']
         box_count = data[p_ind]['number']
+        boxes_Id = []
+        boxes_Serial = []
 
         # for i in range(len(truck_dimension)):
 
         packer.add_bin(Bin('large-2-box', 2, truck_dimension[0], truck_dimension[2], truck_dimension[1], 700000.0))
 
-        # for i in range(0, 84):
-        #     packer.add_item(Item('50g [powder 1]', 25, 860, 400, 360, 1))
-        # for i in range(0, 48):
-        #     packer.add_item(Item('50g [powder 2]', 25, 860, 610, 310, 2))
 
-        for box in packages:
-            packer.add_item(Item('Box', box[2], box[3], box[5], box[4], 2))
+        for i in range(0,len(packages)):
+            # print(each)
+            # print(serial_box[i][0])
+            # print(packages[i][2])
+            packer.add_item(Item(packages[i][2], serial_box[i][0], packages[i][3], packages[i][5], packages[i][4], 2))
+            boxes_Id.append(packages[i][2])
+            boxes_Serial.append(serial_box[i][0])
+        # exit()
+
+        # packer.add_item(Item('Box', box[2], box[3], box[5], box[4], 2))
 
     while len(packer.items) > 0:
         packer.pack()
         next_items = {}
         results = []
         finalresult = []
+        layout = {}
+        ColorPair = {}
+        count =0
+        color_index, Color_Id = vis2.draw(pieces=packages, title="True Solution Packing")
+        for each in Color_Id:
+            # print(each)
 
+            index = boxes_Id.index(each)
+            count +=1
+            color = Color_Id[each]
+            # print(boxes_Serial[index])
+            ColorPair[count] = {boxes_Serial[index]:color}
+        # print(ColorPair)
+        # exit()
+        # print(len(color_index[0]),len(color_index[2]))
 
-        color_index, ColorPair = vis2.draw(pieces=packages, title="True Solution Packing")
         for b in packer.bins:
             print(":::::::::::", b.string())
 
@@ -61,18 +84,19 @@ def Mul_packing():
                 print("====> ", item.string())
                 if item.rotation_type == RotationType.RT_WHD:
                     results.append(
-                        [float(item.position[0]), float(item.position[2]), float(item.position[1]), float(item.width),
-                         float(item.depth), float(item.height)])
+                        [int(item.Id), float(item.position[0]), float(item.position[2]), float(item.position[1]), float(item.width),
+                         float(item.depth), float(item.height),item.name])
+
                 else:
                     results.append(
-                        [float(item.position[0]), float(item.position[2]), float(item.position[1]), float(item.depth),
-                         float(item.width), float(item.height)])
+                        [int(item.Id),float(item.position[0]), float(item.position[2]), float(item.position[1]), float(item.depth),
+                         float(item.width), float(item.height),item.name])
             finalresult.append(results)
 
-            with open('output_{file_count}.json'.format(file_count=Count), 'w') as outfile:
-                json.dump(finalresult, outfile)
+            # with open('output.json'.format(file_count=Count), 'a') as outfile:
+            #     json.dump(finalresult, outfile)
             # print(results)
-            print(finalresult)
+            # print(finalresult)
             # print(color_index)
 
             print("UNFITTED ITEMS:")
@@ -91,10 +115,46 @@ def Mul_packing():
             print(count)
             print("***************************************************")
             print("***************************************************")
-            print(truck_dimension[0], truck_dimension[1])
             for each in finalresult:
                 # print(each)
-                vis2.draw(each, color_index, title="Figure {},{} ".format(Count + 1, ColorPair))
+                sorted_result = sorted(each, key=operator.itemgetter(3))
+                # print(sorted_result,len(sorted_result))
+                ## print result level by level
+                f = open("output_{}.txt".format('input_example1'), "a")
+                f.write("Here is the lists of boxes:Figure {} # of box: {}, \n {}".format(Count + 1, len(each), ColorPair))
+                f.write(str(each))
+                f.write("\n")
+
+                for i in range(0, len(sorted_result)):
+                    # print(i)
+                    if i >= 1:
+                        if sorted_result[i][3] == sorted_result[i - 1][3]:
+                            layout_box.append(sorted_result[i])
+                            count += 1
+                        else:
+                            # vis2.draw(layout_box, color_index, title="Figure {},level {}, # of box: {},{} ".format(Count + 1, level + 1, count,ColorPair))
+                            # f = open("output_{}.txt".format('input_example1'), "a")
+                            # f.write("Here is the lists of boxes:Figure {}, Level: {}, # of box: {}, \n {}".format(Count + 1, level + 1, count,ColorPair))
+                            # for each in layout_box:
+                            #     f.write(str(each))
+                            #     f.write("\n")
+                            f.close()
+                            level += 1
+                            layout_box.append(sorted_result[i])
+                            count += 1
+                            # layout_box = []
+                    else:
+                        layout_box = []
+                        level = 0
+                        count = 1
+                        layout_box.append(sorted_result[i])
+                #
+                vis2.draw(each, color_index,truck_dimension, title="Figure {},# of boxes: {},{} ".format(Count + 1, len(each), ColorPair))
+                # vis2.draw(each, color_index,truck_dimension,
+                #           title="Figure {} levels: {},# of boxes: {},{} ".format(Count + 1, Count, count, ColorPair))
+
+            # for each in sorted_result:
+
         packer.items = []
         packer.bins = []
         for i in list(next_items.keys()):
@@ -109,4 +169,6 @@ def Mul_packing():
         print(len(packer.bins))
         Count += 1
 
-# Mul_packing()
+
+Mul_packing()
+#

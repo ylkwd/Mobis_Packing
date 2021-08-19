@@ -108,17 +108,21 @@ def RunMulPacking():
     print("Run Mul packing")
     # add = RunPacking()
     dataset = {}
-    print(container, boxes)
+    # print(container, boxes)
     print(len(container), len(boxes))
     if len(container) == 0 or len(boxes) <= 5:
         alert = CrateAlert1()
 
     else:
         dataset = ds.Packing_Prepare(conn, container, boxes)
-        print(dataset)
+        # print(dataset)
         # Pack.start()
         test.Mul_packing()
     # Pack.start(dataset)
+
+
+def BoxesList():
+    print("Run Boxes List")
 
 
 class CrateAlert1(QWidget):
@@ -206,6 +210,7 @@ class Example(QtWidgets.QMainWindow):
         self.actionExit.triggered.connect(self.Close)
         self.actionRun.triggered.connect(RunPacking)
         self.actionRunMul.triggered.connect(RunMulPacking)
+        self.actionShow.triggered.connect(BoxesList)
 
     def Close(self):
         self.close()
@@ -235,3 +240,4 @@ def start():
 
 if __name__ == "__main__":
     start()
+    conn.close()

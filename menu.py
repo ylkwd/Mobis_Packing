@@ -14,6 +14,7 @@ import Database
 # from interface import test
 import Add
 import List
+
 logo = 'Mobis.png'
 conn = Database.connect_database()
 
@@ -39,7 +40,7 @@ class Menu(QtWidgets.QWidget):
         self.layout.addWidget(label1, 0, 0, 0, 0)
 
         self.layout.addWidget(self.pack_button, 2, 0)
-        self.layout.addWidget(self.interactive_button, 2,1)
+        self.layout.addWidget(self.interactive_button, 2, 1)
         self.layout.addWidget(self.list_button, 1, 1)
         # self.layout.addWidget(self.config_button, 2, 1)
         self.layout.addWidget(self.import_button, 1, 0)
@@ -75,15 +76,16 @@ class Menu(QtWidgets.QWidget):
         List.start()
         conn.close()
         start()
+
     # @QtCore.Slot()
     # def config(self):
     #     print("config")
-
 
     @QtCore.Slot()
     def import_file(self):
         fileName = str(QFileDialog.getOpenFileName(self, "open file", '..', "Excel files (*.xlsx)")[0])
         print(fileName)
+
         # print(fileName.partition(".xlsx"))
         # Database.create_table_cur(conn,"box")
         if fileName != 0:
@@ -132,6 +134,7 @@ def start():
     sys.exit(app.exec())
     conn.close()
 
+
 def append_data(sensorlist, sensor_data):
     sensorlist.append(sensor_data)
     # print(sensorlist)
@@ -139,3 +142,4 @@ def append_data(sensorlist, sensor_data):
 
 if __name__ == "__main__":
     start()
+    conn.close()

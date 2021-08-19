@@ -165,14 +165,16 @@ def Packing_Prepare(conn, Container, Boxes):
     total_value = 0
     dataset = {}
     solution = []
+    serialNums =[]
+    box_serial = []
     for each in Boxes:
-        print(type(each[0]))
+        # print(type(each[0]))
         BoxeId = int(each[0])
         # exit(0)
         result = select_data(conn, BoxeId, "box")
         for row in result:
             id = row['Id']
-            # SerialNum = row['SerialNumber']
+            SerialNum = row['SerialNumber']
             l = float(row['Length'])
             w = float(row['Width'])
             h = float(row['Height'])
@@ -181,12 +183,14 @@ def Packing_Prepare(conn, Container, Boxes):
             value = 10
             total_value += value
             # total_value += weight
+            serialNums.append([SerialNum])
             boxes.append([l, w, h, vol, value])
             solution.append([0, 0, id, l, w, h])
 
     number = len(Boxes)
+    # box_serial = [serialNums, boxes]
     dataset[i] = {'truck dimension': container, 'number': number, 'boxes': boxes, 'solution': solution,
-                  'total value': total_value}
+                  'total value': total_value,'Box Serials': serialNums}
     # print(dataset)
     with open('input.json', 'w') as outfile:
         json.dump(dataset, outfile)
@@ -203,6 +207,8 @@ def test_example():
     total_value = 0
     dataset = {}
     solution = []
+    serialNums =[]
+    box_serial = []
     # while(number<=47):
     while (Con == "yes"):
 
@@ -215,7 +221,7 @@ def test_example():
 
             for row in result:
                 id = row['Id']
-                # SerialNum = row['SerialNumber']
+                SerialNum = row['SerialNumber']
                 l = float(row['Length'])
                 w = float(row['Width'])
                 h = float(row['Height'])
@@ -224,6 +230,7 @@ def test_example():
                 value = 10
                 total_value += value
                 # total_value += weight
+                serialNums.append((SerialNum))
                 boxes.append([l, w, h, vol, value])
                 solution.append([0, 0, id, l, w, h])
 
@@ -234,10 +241,11 @@ def test_example():
         # number +=1
         # number = len(boxes)
         Con = input("yes or no: ")
-        print(len(boxes), len(solution))
+        box_serial=[serialNums,boxes]
+        print(len(boxes), len(solution),len(serialNums))
     # print(boxes,number)
     dataset[i] = {'truck dimension': container, 'number': number, 'boxes': boxes, 'solution': solution,
-                  'total value': total_value}
+                  'total value': total_value,'Box Serials':box_serial}
     # print("{SerialNumber}, {Length}, {Width}, {Height}, {Weight}".format(**row))
 
     with open('input.json', 'w') as outfile:

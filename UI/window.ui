@@ -35,7 +35,7 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>Fi&amp;le</string>
+     <string>File</string>
     </property>
     <addaction name="actionNewCrate"/>
     <addaction name="separator"/>
@@ -50,9 +50,19 @@
     <addaction name="actionRun"/>
     <addaction name="actionRunMul"/>
    </widget>
+   <widget class="QMenu" name="menuShow">
+    <property name="title">
+     <string>Show</string>
+    </property>
+    <addaction name="actionShow"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuRun"/>
-  </widget>
+   <addaction name="menuShow"/>
+ </widget>
+
+
+
 
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionNewCrate">
@@ -78,6 +88,11 @@
    <action name="actionRunMul">
    <property name="text">
     <string>Run Multiple</string>
+   </property>
+  </action>
+  <action name="actionShow">
+   <property name="text">
+    <string>Boxes List</string>
    </property>
   </action>
  </widget>
