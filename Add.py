@@ -9,13 +9,15 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QMessageBox
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot
 import main as Pack
-# import py3dbp as py3d
-from py3dbp import visualize
-from py3dbp import test as test
 
-conn = ds.connect_database()
+# import py3dbp as py3d
+# from py3dbp import visualize
+# from py3dbp import test as test
+
+
 container = []
 boxes = []
+Multiboxes = []
 
 
 class AddBox(QtWidgets.QDialog):
@@ -49,6 +51,9 @@ class AddBox(QtWidgets.QDialog):
 
             self.model.appendRow(TableRow)
         # print(Quantity)
+
+        Multiboxes.append([row['Id'], Quantity])
+
         for i in range(0, int(Quantity)):
             boxes.append([row['Id']])
             print(i)
@@ -62,9 +67,9 @@ class AddCrate(QtWidgets.QDialog):
         print('add.ui')
         self.model = model
         self.w.show()
-        self.w.buttonBox.accepted.connect(self.addBox)
+        self.w.buttonBox.accepted.connect(self.AddCrate)
 
-    def addBox(self):
+    def AddCrate(self):
         SerialNumber = 0
         Quantity = 1
         print('add')
@@ -109,15 +114,16 @@ def RunMulPacking():
     # add = RunPacking()
     dataset = {}
     # print(container, boxes)
-    print(len(container), len(boxes))
-    if len(container) == 0 or len(boxes) <= 5:
+    print(len(container), len(Multiboxes))
+    if len(container) == 0 or len(Multiboxes) <= 1:
         alert = CrateAlert1()
 
     else:
-        dataset = ds.Packing_Prepare(conn, container, boxes)
-        # print(dataset)
-        # Pack.start()
-        test.Mul_packing()
+        print(container, Multiboxes)
+        dataset = ds.Multi_Packing_Prepare(conn, container, Multiboxes)
+        print(dataset)
+        # # Pack.start()
+        # test.Mul_packing()
     # Pack.start(dataset)
 
 
@@ -235,9 +241,10 @@ def start():
     win.setFixedSize(1280, 720)
     win.show()
     sys.exit(app.exec())
-    conn.close()
+    # conn.close()
 
 
 if __name__ == "__main__":
+    conn = ds.connect_database()
     start()
     conn.close()

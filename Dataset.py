@@ -165,7 +165,7 @@ def Packing_Prepare(conn, Container, Boxes):
     total_value = 0
     dataset = {}
     solution = []
-    serialNums =[]
+    serialNums = []
     box_serial = []
     for each in Boxes:
         # print(type(each[0]))
@@ -190,7 +190,57 @@ def Packing_Prepare(conn, Container, Boxes):
     number = len(Boxes)
     # box_serial = [serialNums, boxes]
     dataset[i] = {'truck dimension': container, 'number': number, 'boxes': boxes, 'solution': solution,
-                  'total value': total_value,'Box Serials': serialNums}
+                  'total value': total_value, 'Box Serials': serialNums}
+    # print(dataset)
+    with open('input.json', 'w') as outfile:
+        json.dump(dataset, outfile)
+    return dataset
+
+
+def Multi_Packing_Prepare(conn, Container, Boxes):
+    # conn = connect_database()
+    ContainerId = Container[0]
+    container = []
+    i = 0
+    ConResult = select_data(conn, ContainerId, "container")
+    for row in ConResult:
+        container = [float(row['Length']), float(row['Width']), float(row['Height'])]
+    print(container)
+    boxes = []
+    number = 0
+    total_value = 0
+    dataset = {}
+    solution = []
+    serialNums = []
+    box_serial = []
+    for each in Boxes:
+        # print(type(each[0]))
+        print(each[0],each[1])
+        # exit(0)
+        BoxeId = int(each[0])
+        BoxeQuan = int(each[1])
+        # exit(0)
+        result = select_data(conn, BoxeId, "box")
+        for row in result:
+            id = row['Id']
+            SerialNum = row['SerialNumber']
+            l = float(row['Length'])
+            w = float(row['Width'])
+            h = float(row['Height'])
+            vol = l * w * h
+            weight = float(row['Weight'])
+            # value = 10
+            # total_value += value
+            # total_value += weight
+            serialNums.append([SerialNum])
+            boxes.append([l, w, h, vol, BoxeQuan])
+            solution.append([0, BoxeQuan, id, l, w, h])
+        number += BoxeQuan
+
+    # number = len(Boxes)
+    # box_serial = [serialNums, boxes]
+    dataset[i] = {'truck dimension': container, 'number': number, 'boxes': boxes, 'solution': solution,
+                  'total value': total_value, 'Box Serials': serialNums}
     # print(dataset)
     with open('input.json', 'w') as outfile:
         json.dump(dataset, outfile)
@@ -207,7 +257,7 @@ def test_example():
     total_value = 0
     dataset = {}
     solution = []
-    serialNums =[]
+    serialNums = []
     box_serial = []
     # while(number<=47):
     while (Con == "yes"):
@@ -241,11 +291,11 @@ def test_example():
         # number +=1
         # number = len(boxes)
         Con = input("yes or no: ")
-        box_serial=[serialNums,boxes]
-        print(len(boxes), len(solution),len(serialNums))
+        box_serial = [serialNums, boxes]
+        print(len(boxes), len(solution), len(serialNums))
     # print(boxes,number)
     dataset[i] = {'truck dimension': container, 'number': number, 'boxes': boxes, 'solution': solution,
-                  'total value': total_value,'Box Serials':box_serial}
+                  'total value': total_value, 'Box Serials': box_serial}
     # print("{SerialNumber}, {Length}, {Width}, {Height}, {Weight}".format(**row))
 
     with open('input.json', 'w') as outfile:
@@ -267,3 +317,4 @@ def test_example():
 # boxresult = select_all_box(conn)
 
 # ressult = Packing_Prepare(conn,[1],[14,14,14])
+# ressult = Multi_Packing_Prepare(conn, [1],[[1120, '30'], [1120, '30'], [1120, '30']]
