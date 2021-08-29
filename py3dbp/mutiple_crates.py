@@ -60,11 +60,11 @@ def Mul_packing():
     for each in Color_Id:
         print(each)
 
-        index = boxes_Id.index(each)
-        count += 1
+        # index = Color_Id.index(each)
         color = Color_Id[each]
         # print(boxes_Serial[index])
-        ColorPair[count] = {boxes_Serial[index]: color}
+        ColorPair[count] = {serial_box[count][0]: color}
+        count += 1
 
     for quantity in Box_Quantity:
         for i in range(0, quantity):
