@@ -136,7 +136,7 @@ class Bin:
 
             if fit:
                 if self.get_total_weight() + item.weight > self.max_weight:
-                    fit = False
+                    fit = True
                     return fit
 
                 self.items.append(item)

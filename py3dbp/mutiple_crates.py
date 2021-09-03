@@ -18,7 +18,9 @@ def Mul_packing():
     container = {}
     count = 0
     Count = 0
-    with open('../input.json', 'r') as outfile:
+    unfittedQuantity =[]
+    filename ='input002-2'
+    with open('../{}.json'.format(filename), 'r') as outfile:
         data = json.load(outfile)
     # with open('input_example1.json', 'r') as outfile:
     #     data = json.load(outfile)
@@ -41,7 +43,7 @@ def Mul_packing():
 
         # for i in range(len(truck_dimension)):
 
-        packer.add_bin(Bin('large-2-box', 2, truck_dimension[0], truck_dimension[2], truck_dimension[1], 700000.0))
+        # packer.add_bin(Bin('large-2-box', 2, truck_dimension[0], truck_dimension[2], truck_dimension[1], 700000.0))
         for each in boxes:
             Box_Quantity.append(each[4])
 
@@ -65,8 +67,11 @@ def Mul_packing():
         # index = Color_Id.index(each)
         color = Color_Id[each]
         # print(boxes_Serial[index])
-        ColorPair[count] = {serial_box[count][0]: color}
+        ColorPair[count+1] = {serial_box[count][0]: color}
         count += 1
+    cratevolume = float(truck_dimension[0]*truck_dimension[1]*truck_dimension[2])
+    print(cratevolume)
+
 
     for quantity in Box_Quantity:
         print(Box_Quantity.index(quantity))
@@ -85,6 +90,7 @@ def Mul_packing():
         results = []
         layout = []
         finalresult = {}
+        boxesvolume = 0
 
         # print(ColorPair)
         # exit()
@@ -96,6 +102,92 @@ def Mul_packing():
             print("FITTED ITEMS:")
             for item in b.items:
                 print("====> ", item.string())
+                boxesvolume += float(item.width * item.depth * item.height)
+                if item.rotation_type == RotationType.RT_WHD:
+                    results.append(
+                        [int(item.Id), float(item.position[0]), float(item.position[2]), float(item.position[1]),
+                         float(item.width),
+                         float(item.depth), float(item.height), item.name])
+
+                else:
+                    results.append(
+                        [int(item.Id), float(item.position[0]), float(item.position[2]), float(item.position[1]),
+                         float(item.depth),
+                         float(item.width), float(item.height), item.name])
+            layout.append(results)
+            print(len(results))
+
+            unfittedQuantity.append(int(quantity%len(results)))
+
+            print("***************************************************")
+            print("***************************************************")
+            ####Write results in file######
+            for each in layout:
+                # print(each)
+                sorted_result = sorted(each, key=operator.itemgetter(3))
+                print(sorted_result, len(sorted_result))
+                # exit()
+
+                finalresult[Count] = {'Crate dimension':truck_dimension,'Color index': color_index[1][Count],
+                                      'crate quantity':int(quantity/len(results)),
+                                      'volume percent': boxesvolume / cratevolume * 100.0,
+                                       'box quantity': len(sorted_result),'box layout':sorted_result}
+                    #####Write results in file######
+                with open('{}output_Mutiple{}.json'.format(filename,Count + 1), 'w') as outfile:
+                    json.dump(finalresult, outfile)
+                    #####Write results in file######
+
+                    #### Show in graphic
+                vis2.draw(each, color_index, truck_dimension,
+                         title="Figure {},# of boxes: {},volume percent:{}, crate quantity:{}, {} "
+                          .format(Count + 1, len(each),boxesvolume / cratevolume * 100.0,int(quantity/len(results)), ColorPair))
+                # ####
+
+                # vis2.draw(each, color_index,truck_dimension,
+                #           title="Figure {} levels: {},# of boxes: {},{} ".format(Count + 1, Count, count, ColorPair))
+
+            # for each in sorted_result:
+        Count +=1
+        packer.items = []
+        packer.bins = []
+        boxes_Id = []
+        boxes_Serial =[]
+
+    print("***************************************************")
+    print("***************************************************")
+    print("***************************************************")
+    print("***************************************************")
+
+    print(unfittedQuantity)
+
+    for quantity in unfittedQuantity:
+        for i in range(0, quantity):
+            packer.add_item(
+                Item(packages[unfittedQuantity.index(quantity)][2], serial_box[unfittedQuantity.index(quantity)][0],
+                     packages[unfittedQuantity.index(quantity)][3],
+                     packages[unfittedQuantity.index(quantity)][5], packages[unfittedQuantity.index(quantity)][4], 2))
+            boxes_Id.append(packages[unfittedQuantity.index(quantity)][2])
+            boxes_Serial.append(serial_box[unfittedQuantity.index(quantity)][0])
+
+    print(boxes_Id, boxes_Serial)
+    packer.add_bin(Bin('large-2-box', 2, truck_dimension[0], truck_dimension[2], truck_dimension[1], 7000.0))
+
+    while len(packer.items) > 0:
+
+        packer.pack()
+        next_items = {}
+        results = []
+        layout = []
+        finalresult = {}
+
+        boxesvolume = 0
+        for b in packer.bins:
+            print(":::::::::::", b.string())
+
+            print("FITTED ITEMS:")
+            for item in b.items:
+                print("====> ", item.string())
+                boxesvolume += float(item.width*item.depth*item.height)
                 if item.rotation_type == RotationType.RT_WHD:
                     results.append(
                         [int(item.Id), float(item.position[0]), float(item.position[2]), float(item.position[1]),
@@ -109,103 +201,54 @@ def Mul_packing():
                          float(item.width), float(item.height), item.name])
             layout.append(results)
 
-            # with open('output.json'.format(file_count=Count), 'a') as outfile:
-            #     json.dump(finalresult, outfile)
-            # print(results)
-            # print(finalresult)
-            # print(color_index)
-
-            ######### Unfitted items#######
-            # print("UNFITTED ITEMS:")
-            # # exit(0)
-            # count = 0
-            # for item in b.unfitted_items:
-            #     print("====> ", item.string())
-            #
-            #     # print(item.name,int(item.width),type(item.width))
-            #     next_items[count] = {'Id': item.Id, 'name': item.name, 'width': int(item.width),
-            #                          'height': int(item.height),
-            #                          "depth": int(item.depth), "weight": int(item.weight)}
-            #     count += 1
-            #
-            # packer.unfitted_items = []
-            # print(count)
-            ######### Unfitted items#######
-            print("***************************************************")
-            print("***************************************************")
+                    ####Write results in file######
             for each in layout:
                 # print(each)
                 sorted_result = sorted(each, key=operator.itemgetter(3))
                 print(sorted_result, len(sorted_result))
                 # exit()
-                ## print result level by level
-                # f = open("output_{}.txt".format('Mutilple'), "a")
-                # f.write(
-                #     "Here is the lists of boxes:Figure {} # of box: {}, \n {}".format(Count + 1, len(each), ColorPair))
-                # f.write(str(each))
-                # f.write("\n")
 
-                #### Print level by level in Graphic ####
-                # for i in range(0, len(sorted_result)):
-                #     # print(i)
-                #     if i >= 1:
-                #         if sorted_result[i][3] == sorted_result[i - 1][3]:
-                #             layout_box.append(sorted_result[i])
-                #             count += 1
-                #         else:
-                #             # vis2.draw(layout_box, color_index, title="Figure {},level {}, # of box: {},{} ".format(Count + 1, level + 1, count,ColorPair))
-                #             # f = open("output_{}.txt".format('input_example1'), "a")
-                #             # f.write("Here is the lists of boxes:Figure {}, Level: {}, # of box: {}, \n {}".format(Count + 1, level + 1, count,ColorPair))
-                #             # for each in layout_box:
-                #             #     f.write(str(each))
-                #             #     f.write("\n")
-                #             f.close()
-                #             level += 1
-                #             layout_box.append(sorted_result[i])
-                #             count += 1
-                #             # layout_box = []
-                #     else:
-                #         layout_box = []
-                #         level = 0
-                #         count = 1
-                #         layout_box.append(sorted_result[i])
-
-                    #### Print level by level in Graphic ####
-
-                finalresult[Count] = {'Crate dimension':truck_dimension,'Color index': color_index[1][Count],
+                finalresult[Count] = {'Crate dimension':truck_dimension,'Color index': color_index[1],
+                                      'volume percent':boxesvolume/cratevolume*100.0,
                                        'box quantity': len(sorted_result),'box layout':sorted_result}
                     #####Write results in file######
-                with open('{}output_Mutiple{}.json'.format(item.name,Count + 1), 'w') as outfile:
+                with open('Mixedoutput_Mutiple{}.json'.format(Count + 1), 'w') as outfile:
                     json.dump(finalresult, outfile)
                     #####Write results in file######
+                    #### Show in graphic
+                vis2.draw(each, color_index, truck_dimension,
+                              title="Figure {},# of boxes: {},volume percent: {},{} ".format(Count + 1, len(each),
+                                                                                              boxesvolume/cratevolume*100.0,ColorPair))
+                    ####
 
-                    ##### Show in graphic
-               # vis2.draw(each, color_index, truck_dimension,
-                #          title="Figure {},# of boxes: {},{} ".format(Count + 1, len(each), ColorPair))
-                #####
+            print("UNFITTED ITEMS:")
+            # exit(0)
+            count = 0
+            for item in b.unfitted_items:
+                print("====> ", item.string())
 
-                # vis2.draw(each, color_index,truck_dimension,
-                #           title="Figure {} levels: {},# of boxes: {},{} ".format(Count + 1, Count, count, ColorPair))
+                # print(item.name,int(item.width),type(item.width))
+                next_items[count] = {'Id': item.Id, 'name': item.name, 'width': int(item.width),
+                                     'height': int(item.height),
+                                     "depth": int(item.depth), "weight": int(item.weight)}
+                count += 1
 
-            # for each in sorted_result:
-        Count +=1
-        packer.items = []
-        packer.bins = []
-        boxes_Id = []
-        boxes_Serial =[]
+            packer.unfitted_items = []
+            print(count)
+            packer.items = []
+            packer.bins = []
 
-
-        # for i in list(next_items.keys()):
-        #     # print()
-        #     packer.add_item(
-        #         Item(next_items[i]['Id'], next_items[i]['name'], next_items[i]['width'], next_items[i]['height'],
-        #              next_items[i]['depth'],
-        #              next_items[i]['weight']))
-        # packer.add_bin(Bin('large-2-box', 2, truck_dimension[0], truck_dimension[2], truck_dimension[1], 7000.0))
-        # print(len(packer.items))
-        # print(len(packer.unfitted_items))
-        # print(len(packer.bins))
-        # Count += 1
+            for i in list(next_items.keys()):
+                # print()
+                packer.add_item(
+                    Item(next_items[i]['Id'], next_items[i]['name'], next_items[i]['width'], next_items[i]['height'],
+                         next_items[i]['depth'],
+                         next_items[i]['weight']))
+            packer.add_bin(Bin('large-2-box', 2, truck_dimension[0], truck_dimension[2], truck_dimension[1], 7000.0))
+            print(len(packer.items))
+            print(len(packer.unfitted_items))
+            print(len(packer.bins))
+            Count += 1
 
 
 Mul_packing()

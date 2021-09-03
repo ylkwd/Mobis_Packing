@@ -8,7 +8,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QMessageBox
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot
-import main as Pack
+# import main as Pack
 
 # import py3dbp as py3d
 # from py3dbp import visualize
@@ -98,7 +98,7 @@ def RunPacking():
     dataset = {}
     print(container, boxes)
     print(len(container), len(boxes))
-    if len(container) == 0 or len(boxes) <= 5:
+    if len(container) == 0 or len(boxes) < 1:
         alert = CrateAlert1()
 
     else:
@@ -114,8 +114,8 @@ def RunMulPacking():
     # add = RunPacking()
     dataset = {}
     # print(container, boxes)
-    print(len(container), len(Multiboxes))
-    if len(container) == 0 or len(Multiboxes) <= 1:
+    print(len(container), len(boxes))
+    if len(container) == 0 or len(boxes) < 1:
         alert = CrateAlert1()
 
     else:
