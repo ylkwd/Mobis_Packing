@@ -1,10 +1,12 @@
 import operator
-
+import sys
 from py3dbp import Packer, Bin, Item
 # import Dataset as Dataset
 import json
 from py3dbp import visualize as vis2
 from py3dbp.constants import RotationType, Axis
+import os
+import datetime
 
 
 # def packing():
@@ -20,8 +22,8 @@ def Mul_packing():
     container = {}
     count = 0
     Count = 0
-    filename = 'input4case'
-    with open('../{}.json'.format(filename), 'r') as outfile:
+    filename = 'input'
+    with open('{}.json'.format(filename), 'r') as outfile:
         data = json.load(outfile)
     # with open('input_example1.json', 'r') as outfile:
     #     data = json.load(outfile)
@@ -67,7 +69,7 @@ def Mul_packing():
     # print(len(boxes_Serial))
     # exit()
 
-    # color_index, Color_Id = vis2.draw(pieces=packages, title="True Solution Packing")
+    color_index, Color_Id = vis2.draw(pieces=packages, title="True Solution Packing")
     # for each in Color_Id:
     #     print(each)
     #
@@ -102,6 +104,11 @@ def Mul_packing():
         # exit()
         # print(len(color_index[0]),len(color_index[2]))
 
+        # Create a folder to save output files
+        current_time = datetime.datetime.now() # Get curret time
+        folder_name = current_time.strftime("%Y-%m-%d %H%M") # Format time into folder name
+        os.makedirs(folder_name, exist_ok= True) # Make folder
+
         for b in packer.bins:
             print(":::::::::::", b.string())
 
@@ -118,6 +125,7 @@ def Mul_packing():
                     results.append(
                         [int(item.Id),float(item.position[0]), float(item.position[2]), float(item.position[1]), float(item.depth),
                          float(item.width), float(item.height),item.name])
+
             layout.append(results)
 
             # with open('output.json'.format(file_count=Count), 'a') as outfile:
@@ -142,20 +150,34 @@ def Mul_packing():
             print(count)
             print("***************************************************")
             print("***************************************************")
+
             for each in layout:
-                # print(each)
+                print(each)
                 sorted_result = sorted(each, key=operator.itemgetter(3))
                 # print(sorted_result,len(sorted_result))
                 # exit()
                 ## print result level by level
-
+                crate_no = 'Crate ' + str(Count+1)
+                box_quantity = 'Number of boxes: ' + str(len(each))
                 total_packed += len(each)
-                f = open("output_{}.txt".format(filename), "a")
-                f.write("Here is the lists of boxes:Figure {} # of box: {},# of total packed box: {} \n ".format(
-                    Count + 1, len(each), total_packed))
-                f.write(str(each))
-                f.write("\n")
-                f.write("\n")
+
+
+                # Create txt output file for each crate
+                with open(os.path.join(folder_name, 'Crate ' + str(Count+1) + '.txt'), 'w') as f:
+                    [f.write(crate_no + '    ' + box_quantity + '\n')]
+                    [f.write('----------------------------------------------------------------\n')]
+                    [f.write('|Serial Number|     COORDINATES     |     DIMENSION     |  ID  |\n')]
+                    [f.write(f'| {line[7]} | {line[1]} | {line[2]} | {line[3]} | {line[4]} | {line[5]} | {line[6]} | {line[0]}\n') for line in
+                     each]
+                    [f.write(f'Total Number of Boxes Packed: {total_packed}')]
+
+                # f = open("output_{}.txt".format(filename), "a")
+                # f.write("Here is the lists of boxes:Figure {} # of box: {},# of total packed box: {} \n ".format(
+                #     Count + 1, len(each), total_packed))
+                # f.write(str(each))
+                # f.write("\n")
+                # f.write("\n")
+
 
                 # finalresult[Count] = {'Crate dimension': truck_dimension, 'Color index': color_index[1],
                 #                       'volume percent': boxesvolume / cratevolume * 100.0,
@@ -188,9 +210,9 @@ def Mul_packing():
                         count = 1
                         layout_box.append(sorted_result[i])
                 #
-                # vis2.draw(each, color_index, truck_dimension,
-                #           title="Figure {},# of boxes: {},volume percent:{}, {} "
-                #           .format(Count + 1, len(each), boxesvolume / cratevolume * 100.0, ColorPair))
+                vis2.draw(each, color_index, truck_dimension,
+                          title="Figure {},# of boxes: {},volume percent:{}, {} "
+                          .format(Count + 1, len(each), boxesvolume / cratevolume * 100.0, ColorPair))
                 # ####
             # for each in sorted_result:
 
@@ -208,6 +230,9 @@ def Mul_packing():
         print(len(packer.bins))
         Count += 1
 
+def start():
+    Mul_packing()
 
-Mul_packing()
-#
+if __name__ == "__main__":
+    start()
+    # conn.close()
