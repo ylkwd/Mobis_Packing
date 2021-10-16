@@ -1,7 +1,7 @@
 import sys
 import random
 import pandas as pd
-from PyQt5.QtCore import QCoreApplication
+from PyQt5.QtCore import Qt, QCoreApplication
 from PySide6 import QtCore, QtWidgets, QtGui
 from PySide6.QtWidgets import QFileDialog, QLabel
 # import data
@@ -10,7 +10,7 @@ from PySide6.QtGui import QFileOpenEvent, QPixmap
 import Database
 import Dataset as ds
 # from interface import gui
-# from PyQt5 import QtWidgets, uic
+# from PyQt5 import QtWidgets, uic, Qt
 # from PyQt5.QtWidgets import QMessageBox
 # from interface import test
 import Add
@@ -27,19 +27,20 @@ class Menu(QtWidgets.QWidget):
 
         # self.w = gui.Gui()
         # self.table = test.TableView(data)
-        label1 = QLabel(self)
-        pixmap = QPixmap("Mobis.png")
-        label1.setPixmap(pixmap)
+        logo = QLabel(self)
+        pixmap = QPixmap("MobisLogo.png")
+        logo.setAlignment(QtCore.Qt.AlignCenter)
+        logo.setPixmap(pixmap)
 
         self.pack_button = QtWidgets.QPushButton("Pack!")
-        self.config_button = QtWidgets.QPushButton("Config")
-        self.list_button = QtWidgets.QPushButton("Packing list")
-        self.import_button = QtWidgets.QPushButton("Import File")
+        self.config_button = QtWidgets.QPushButton("Packing Instruction #TODO")
+        self.list_button = QtWidgets.QPushButton("Box Spec Database")
+        self.import_button = QtWidgets.QPushButton("Import Box Specs")
         self.interactive_button = QtWidgets.QPushButton("Exit")
 
         self.layout = QtWidgets.QGridLayout(self)
         self.layout.setGeometry(QtCore.QRect(0, 0, 10, 10))
-        self.layout.addWidget(label1, 0, 0, 0, 0)
+        self.layout.addWidget(logo, 0, 0, 0, 0)
 
         self.layout.addWidget(self.pack_button, 2, 0)
         self.layout.addWidget(self.interactive_button, 2, 1)
@@ -53,6 +54,7 @@ class Menu(QtWidgets.QWidget):
         self.import_button.clicked.connect(self.import_file)
         self.interactive_button.clicked.connect(self.interactive_run)
 
+    # Pack! Function
     @QtCore.Slot()
     def pack(self):
         print("pack")
@@ -64,6 +66,7 @@ class Menu(QtWidgets.QWidget):
         # else:
         #     self.w.show()
 
+    # Box Spec Database
     @QtCore.Slot()
     def list(self):
         # if self.table.isVisible():
@@ -76,9 +79,13 @@ class Menu(QtWidgets.QWidget):
         # for row in result:
         #     print("{SerialNumber}, {Length}, {Width}, {Height}, {Weight}".format(**row))
         List.start()
+
+        # Back Button
+
         conn.close()
         start()
 
+    # To be integrated into Pack!
     @QtCore.Slot()
     def config(self):
         print("config")
@@ -128,6 +135,7 @@ class Menu(QtWidgets.QWidget):
             msg.setIcon(QtWidgets.QMessageBox.Information)
             msg.setText("Please select an input file")
 
+    # Import Box Specs
     @QtCore.Slot()
     def import_file(self):
         fileName = str(QFileDialog.getOpenFileName(self, "open file", '..', "Excel files (*.xlsx)")[0])
@@ -159,6 +167,7 @@ class Menu(QtWidgets.QWidget):
 
         pass
 
+    # Exit
     @QtCore.Slot()
     def interactive_run(self):
         # interactive.start()
@@ -168,18 +177,18 @@ class Menu(QtWidgets.QWidget):
         pass
 
 
-def start():
-    app = QtWidgets.QApplication([])
-
-    widget = Menu()
-    widget.resize(800, 400)
-    widget.setWindowTitle("Welcome to Mobis Packing!")
-    print("Welcome to Mobis Packing!")
-
-    widget.show()
-
-    sys.exit(app.exec())
-    conn.close()
+# def start():
+#     app = QtWidgets.QApplication([])
+#
+#     widget = Menu()
+#     widget.resize(800, 400)
+#     widget.setWindowTitle("Welcome to Mobis Packing!")
+#     print("Welcome to Mobis Packing!")
+#
+#     widget.show()
+#
+#     sys.exit(app.exec())
+#     conn.close()
 
 
 def append_data(sensorlist, sensor_data):
@@ -188,5 +197,13 @@ def append_data(sensorlist, sensor_data):
 
 
 if __name__ == "__main__":
-    start()
+    app = QtWidgets.QApplication([])
+    widget = Menu()
+    widget.resize(800, 400)
+    widget.setWindowTitle("Welcome to Mobis Packing!")
+    print("Welcome to Mobis Packing!")
+    # start()
+    widget.show()
+
+    sys.exit(app.exec())
     conn.close()

@@ -55,12 +55,12 @@ def Mul_packing():
         print(Box_Quantity)
         # exit()
         for j in range (0,len(Box_Quantity)):
-        # for quantity in Box_Quantity:
-        #     print(Box_Quantity.index(quantity))
+            # for quantity in Box_Quantity:
+            #     print(Box_Quantity.index(quantity))
             for i in range(0, Box_Quantity[j]):
-            # print(each)
-            # print(serial_box[i][0])
-            # print(packages[i][2])
+                # print(each)
+                # print(serial_box[i][0])
+                # print(packages[i][2])
                 packer.add_item(Item(packages[j][2], serial_box[j][0], packages[j][3], packages[j][5], packages[j][4], 2))
                 boxes_Id.append(packages[j][2])
                 boxes_Serial.append(serial_box[j][0])
@@ -78,9 +78,15 @@ def Mul_packing():
     #     # print(boxes_Serial[index])
     #     ColorPair[count + 1] = {serial_box[count][0]: color}
     #     count += 1
-        # packer.add_item(Item('Box', box[2], box[3], box[5], box[4], 2))
+    # packer.add_item(Item('Box', box[2], box[3], box[5], box[4], 2))
     cratevolume = float(truck_dimension[0] * truck_dimension[1] * truck_dimension[2])
     total_packed =0
+
+    # Create a folder to save output files
+    current_time = datetime.datetime.now()  # Get current time
+    folder_name = current_time.strftime("%Y-%m-%d %H%M%S")  # Format time into folder name
+    os.makedirs(folder_name, exist_ok=True)  # Make folder
+
     while len(packer.items) > 0:
         packer.pack()
         next_items = {}
@@ -104,10 +110,7 @@ def Mul_packing():
         # exit()
         # print(len(color_index[0]),len(color_index[2]))
 
-        # Create a folder to save output files
-        current_time = datetime.datetime.now() # Get curret time
-        folder_name = current_time.strftime("%Y-%m-%d %H%M") # Format time into folder name
-        os.makedirs(folder_name, exist_ok= True) # Make folder
+
 
         for b in packer.bins:
             print(":::::::::::", b.string())

@@ -8,7 +8,7 @@ import json
 def connect_database():
     try:
         cnx = mysql.connector.connect(user='root',
-                                      password='lyx19930914',
+                                      password='123456',
                                       database='mobis',
                                       host='127.0.0.1',
                                       auth_plugin='mysql_native_password')

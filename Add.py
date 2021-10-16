@@ -8,16 +8,17 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QMessageBox
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot
-# import main as Pack
+import main as Pack
 
-# import py3dbp as py3d
-# from py3dbp import visualize
-# from py3dbp import test as test
-
+import py3dbp as py3d
+from py3dbp import visualize
+from py3dbp import test as test
 
 container = []
 boxes = []
 Multiboxes = []
+
+conn = ds.connect_database()
 
 
 class AddBox(QtWidgets.QDialog):
@@ -41,23 +42,29 @@ class AddBox(QtWidgets.QDialog):
         # exit(0)
         # result = dataset.select_data_serial(conn,SerialNumber)
         result = ds.select_Box_serial(conn, SerialNumber)
-        # print(result)
+        print('res')
+        print(result)
         # exit(0)
-        for row in result:
-            id = '{}'.format(row['Id'])
-            TableRow = (
-                QStandardItem('{}'.format(row['Id'])), QStandardItem(row['SerialNumber']), QStandardItem(row['Length']),
-                QStandardItem(row['Width']), QStandardItem(row['Height']), QStandardItem(Quantity))
+        try:
+            for row in result:
+                print(row)
+                id = '{}'.format(row['Id'])
+                TableRow = (
+                    QStandardItem('{}'.format(row['Id'])), QStandardItem(row['SerialNumber']), QStandardItem(row['Length']),
+                    QStandardItem(row['Width']), QStandardItem(row['Height']), QStandardItem(Quantity))
+                print('append')
+                self.model.appendRow(TableRow)
+            # print(Quantity)
+            Multiboxes.append([row['Id'], Quantity])
 
-            self.model.appendRow(TableRow)
-        # print(Quantity)
+            for i in range(0, int(Quantity)):
+                boxes.append([row['Id']])
+                print(i)
+                i += 1
+        except:
+            print("SN Error")
+            ex = boxNotFoundAlert()
 
-        Multiboxes.append([row['Id'], Quantity])
-
-        for i in range(0, int(Quantity)):
-            boxes.append([row['Id']])
-            print(i)
-            i += 1
 
 
 class AddCrate(QtWidgets.QDialog):
@@ -122,6 +129,7 @@ def RunMulPacking():
         print(container, Multiboxes)
         dataset = ds.Multi_Packing_Prepare(conn, container, Multiboxes)
         print(dataset)
+        test.start()
         # # Pack.start()
         # test.Mul_packing()
     # Pack.start(dataset)
@@ -191,6 +199,35 @@ class CrateAlert(QWidget):
         self.show()
 
 
+# Bad Serial Number input
+class boxNotFoundAlert(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.title = 'Error Adding Boxes'
+        self.left = 10
+        self.top = 10
+        self.width = 320
+        self.height = 200
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle(self.title)
+        self.setGeometry(self.left, self.top, self.width, self.height)
+
+        button_reply = QMessageBox.question(self, self.title, "Serial Number Not Found",
+                                            QMessageBox.Retry | QMessageBox.Cancel, QMessageBox.Cancel)
+        print(int(button_reply))
+        if button_reply == QMessageBox.Retry:
+            print('Retry Clicked.')
+        #   TODO return to add box
+        if button_reply == QMessageBox.Cancel:
+            print('Cancel Clicked')
+        if button_reply == QMessageBox.Cancel:
+            print('Back Clicked')
+
+        self.show()
+
+
 class Example(QtWidgets.QMainWindow):
     def __init__(self):
         super(Example, self).__init__()
@@ -219,6 +256,7 @@ class Example(QtWidgets.QMainWindow):
         self.actionShow.triggered.connect(BoxesList)
 
     def Close(self):
+        # conn.close()
         self.close()
 
     def addBox(self):
@@ -237,6 +275,7 @@ class Example(QtWidgets.QMainWindow):
 
 def start():
     app = QtWidgets.QApplication([])
+    app.setQuitOnLastWindowClosed(False)
     win = Example()
     win.setFixedSize(1280, 720)
     win.show()

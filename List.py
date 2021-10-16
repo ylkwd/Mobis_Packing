@@ -8,7 +8,7 @@ from PyQt5.uic import loadUiType
 import Database as DS
 
 # conn = ds.connect_database()
-Con = DS.connect_database()
+# Con = DS.connect_database()
 
 
 class AddContact(QtWidgets.QDialog):
@@ -74,7 +74,7 @@ def start():
     win.setFixedSize(1280, 720)
     win.show()
     sys.exit(app.exec())
-    Con.close()
+    # Con.close()
 
 
 # if __name__ == "__main__":
