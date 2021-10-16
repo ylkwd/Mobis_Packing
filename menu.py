@@ -17,7 +17,7 @@ import Add
 import List
 
 logo = 'Mobis.png'
-conn = Database.connect_database()
+# conn = Database.connect_database()
 # conn = Database.connect_database()
 
 
@@ -45,7 +45,7 @@ class Menu(QtWidgets.QWidget):
         self.layout.addWidget(self.pack_button, 2, 0)
         self.layout.addWidget(self.interactive_button, 2, 1)
         self.layout.addWidget(self.list_button, 1, 1)
-        self.layout.addWidget(self.config_button, 2, 1)
+        # self.layout.addWidget(self.config_button, 2, 1)
         self.layout.addWidget(self.import_button, 1, 0)
 
         self.pack_button.clicked.connect(self.pack)
