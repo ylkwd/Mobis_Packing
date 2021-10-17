@@ -63,7 +63,7 @@ class AddBox(QtWidgets.QDialog):
                 i += 1
         except:
             print("SN Error")
-            ex = boxNotFoundAlert()
+            ex = BoxNotFoundAlert()
 
 
 
@@ -87,16 +87,20 @@ class AddCrate(QtWidgets.QDialog):
         # print(SerialNumber,Quantity)
         # exit(0)
         # result = dataset.select_data_serial(conn,SerialNumber)
-        result = ds.select_Crate_serial(conn, SerialNumber)
-        # print(result)
-        # exit(0)
-        for row in result:
-            id = '{}'.format(row['Id'])
-            TableRow = (
-                QStandardItem('{}'.format(row['Id'])), QStandardItem(row['SerialNumber']), QStandardItem(row['Length']),
-                QStandardItem(row['Width']), QStandardItem(row['Height']), QStandardItem('1'))
-            self.model.appendRow(TableRow)
-        container.append(row['Id'])
+        try:
+            result = ds.select_Crate_serial(conn, SerialNumber)
+            # print(result)
+            # exit(0)
+            for row in result:
+                id = '{}'.format(row['Id'])
+                TableRow = (
+                    QStandardItem('{}'.format(row['Id'])), QStandardItem(row['SerialNumber']), QStandardItem(row['Length']),
+                    QStandardItem(row['Width']), QStandardItem(row['Height']), QStandardItem('1'))
+                self.model.appendRow(TableRow)
+            container.append(row['Id'])
+        except:
+            print("Container SN Error")
+            ex = ContianerNotFoundAlert()
 
 
 def RunPacking():
@@ -199,8 +203,8 @@ class CrateAlert(QWidget):
         self.show()
 
 
-# Bad Serial Number input
-class boxNotFoundAlert(QWidget):
+# Bad Box Serial Number input
+class BoxNotFoundAlert(QWidget):
     def __init__(self):
         super().__init__()
         self.title = 'Error Adding Boxes'
@@ -212,9 +216,33 @@ class boxNotFoundAlert(QWidget):
 
     def initUI(self):
         self.setWindowTitle(self.title)
-        self.setGeometry(self.left, self.top, self.width, self.height)
-
         button_reply = QMessageBox.question(self, self.title, "Serial Number Not Found",
+                                            QMessageBox.Retry | QMessageBox.Cancel, QMessageBox.Cancel)
+        print(int(button_reply))
+        if button_reply == QMessageBox.Retry:
+            print('Retry Clicked.')
+        #   TODO return to add box
+        if button_reply == QMessageBox.Cancel:
+            print('Cancel Clicked')
+        if button_reply == QMessageBox.Cancel:
+            print('Back Clicked')
+
+        self.show()
+
+# Bad Container Serial Number input
+class ContianerNotFoundAlert(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.title = 'Error Adding Container'
+        self.left = 10
+        self.top = 10
+        self.width = 320
+        self.height = 200
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle(self.title)
+        button_reply = QMessageBox.question(self, self.title, "Container Serial Number Not Found",
                                             QMessageBox.Retry | QMessageBox.Cancel, QMessageBox.Cancel)
         print(int(button_reply))
         if button_reply == QMessageBox.Retry:
