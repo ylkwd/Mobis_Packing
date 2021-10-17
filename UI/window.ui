@@ -47,18 +47,18 @@
    <property name="title">
     <string>Run</string>
    </property>
-    <addaction name="actionRun"/>
+<!--    <addaction name="actionRun"/>-->
     <addaction name="actionRunMul"/>
    </widget>
    <widget class="QMenu" name="menuShow">
     <property name="title">
      <string>Show</string>
     </property>
-    <addaction name="actionShow"/>
+<!--    <addaction name="actionShow"/>-->
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuRun"/>
-   <addaction name="menuShow"/>
+<!--   <addaction name="menuShow"/>-->
  </widget>
 
 
