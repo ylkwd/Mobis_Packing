@@ -22,8 +22,8 @@ def Mul_packing():
     container = {}
     count = 0
     Count = 0
-    filename = 'input'
-    with open('{}.json'.format(filename), 'r') as outfile:
+    filename = 'input1'
+    with open('../{}.json'.format(filename), 'r') as outfile:
         data = json.load(outfile)
     # with open('input_example1.json', 'r') as outfile:
     #     data = json.load(outfile)

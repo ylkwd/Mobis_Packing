@@ -54,10 +54,15 @@ class Item:
     #
     #     return dimension
     def get_dimension(self):
-        if self.rotation_type == RotationType.RT_WHD:
-            dimension = [self.width, self.height, self.depth]
-        elif self.rotation_type == RotationType.RT_DHW:
+        # if self.rotation_type == RotationType.RT_WHD:
+        #     dimension = [self.width, self.height, self.depth]
+        # elif self.rotation_type == RotationType.RT_DHW:
+        #     dimension = [self.depth, self.height, self.width]
+        if self.rotation_type == RotationType.RT_DHW:
             dimension = [self.depth, self.height, self.width]
+        elif self.rotation_type == RotationType.RT_WHD:
+            dimension = [self.width, self.height, self.depth]
+
         else:
             dimension = []
 
@@ -190,18 +195,19 @@ class Packer:
                         ib.position[1],
                         ib.position[2]
                     ]
-                elif axis == Axis.HEIGHT:
-                    pivot = [
-                        ib.position[0],
-                        ib.position[1] + h,
-                        ib.position[2]
-                    ]
                 elif axis == Axis.DEPTH:
                     pivot = [
                         ib.position[0],
                         ib.position[1],
                         ib.position[2] + d
                     ]
+                elif axis == Axis.HEIGHT:
+                    pivot = [
+                        ib.position[0],
+                        ib.position[1] + h,
+                        ib.position[2]
+                    ]
+
 
                 if bin.put_item(item, pivot):
                     fitted = True
@@ -213,7 +219,7 @@ class Packer:
             bin.unfitted_items.append(item)
 
     def pack(
-        self, bigger_first=False, distribute_items=False,
+        self, bigger_first=True, distribute_items=False,
         number_of_decimals=DEFAULT_NUMBER_OF_DECIMALS
     ):
         for bin in self.bins:

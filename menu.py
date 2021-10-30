@@ -1,6 +1,6 @@
 import sys
 import random
-import pandas as pd
+# import pandas as pd
 from PyQt5.QtCore import Qt, QCoreApplication
 from PySide6 import QtCore, QtWidgets, QtGui
 from PySide6.QtWidgets import QFileDialog, QLabel
